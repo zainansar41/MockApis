@@ -4,6 +4,12 @@ import Project from "../models/projects.js";
 export const createProject = async (req, res) => {
     try {
         const { name, description } = req.body;
+        
+        const projectExists = await Project.findOne({ name, user: req.user._id });
+        if (projectExists) {
+            return res.status(400).json({ error: "Project with same name already exists" });
+        }
+
         const project = new Project({
             name,
             description,
